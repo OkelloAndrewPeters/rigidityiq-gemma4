@@ -196,7 +196,7 @@ video input. The input layer is what changes.
 ---
 
 ## License
-
+MIT License — see [LICENSE](LICENSE)
 
 
 *Clinical grounding based on MDS-UPDRS Part III Item 3.3 rigidity scale.
