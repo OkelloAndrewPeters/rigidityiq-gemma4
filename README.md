@@ -43,8 +43,6 @@ urgency tier, and plain-language notes.
 
 ### Inference Pipeline
 
-### Inference Pipeline
-
 ```mermaid
 flowchart LR
     A[Clinical Observations<br/>Gradio UI]
