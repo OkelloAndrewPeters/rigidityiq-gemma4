@@ -43,6 +43,8 @@ urgency tier, and plain-language notes.
 
 ### Inference Pipeline
 
+### Inference Pipeline
+
 ```mermaid
 flowchart LR
     A[Clinical Observations<br/>Gradio UI]
@@ -54,14 +56,15 @@ flowchart LR
     G[Output<br/>Gradio UI + SQLite]
 
     A --> B --> C --> D --> E --> F --> G
+```
 
 1. **Clinical Observations Input** (Gradio UI)  
 2. **Semantic Search** using `all-MiniLM-L6-v2`  
-3. **Vector Retrieval** from ChromaDB (MDS-UPDRS guidelines, local)  
-4. **Reasoning Pass** with Gemma 4 E2B (native thinking)  
-5. **Structured Output** via JSON (function calling)  
-6. **Schema Validation & Self-Correction Loop**  
-7. **Results Display & Storage** (Gradio UI + SQLite, local)
+3. **Vector Retrieval** from ChromaDB  
+4. **Reasoning Pass** with Gemma 4 E2B  
+5. **Structured JSON Output**  
+6. **Validation & Self-Correction**  
+7. **Final Output** (UI + SQLite)
 
 100% AIR-GAPPED. ZERO CLOUD DEPENDENCY.
 ### Why Gemma 4
