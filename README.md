@@ -169,7 +169,7 @@ rigidityiq/
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/rigidityiq.git
+git clone https://github.com/OkelloAndrewPeters/rigidityiq-gemma4.git
 cd rigidityiq
 ```
 
