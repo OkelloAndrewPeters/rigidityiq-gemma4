@@ -19,8 +19,9 @@ years, not because the clinical knowledge doesn't exist, but because the tools
 to apply it never reach them.
 
 RigidityIQ puts neurological clinical decision support directly in the hands
-of Community Health Workers (CHWs) — running fully offline on a basic laptop,
-with no internet required during clinical use.
+of Community Health Workers (CHWs), it runs fully offline on a basic laptop,
+with no internet required during clinical use. RigidityIQ grades rigidity which is 
+one of 3 major motor symptoms of Parkinson's disease.
 
 ---
 
@@ -34,14 +35,33 @@ with no internet required during clinical use.
 
 ## How It Works
 
-A CHW enters structured clinical observations — walking speed, arm swing,
+A community health worker (CHW) enters structured clinical observations such as walking speed, arm swing,
 posture, and free-text notes. RigidityIQ returns a full clinical assessment
 graded on the **MDS-UPDRS Part III Item 3.3** rigidity scale (Grades 0–4),
 the same scale used by neurologists, along with a referral recommendation,
 urgency tier, and plain-language notes.
 
 ### Inference Pipeline
-Clinical Observations (Gradio UI) --> Semantic Search — all-MiniLM-L6-v2 --> ChromaDB Vector Store — MDS-UPDRS Guidelines (local) --> Gemma 4 E2B — Reasoning Pass (Native Thinking) --> Gemma 4 E2B — Structured JSON Pass (Native Function Calling) --> Schema Validation + Self-Correction Loop --> Gradio UI   SQLite DB + Report     (local)
+
+```mermaid
+flowchart LR
+    A[Clinical Observations<br/>Gradio UI]
+    B[Semantic Search<br/>all-MiniLM-L6-v2]
+    C[ChromaDB<br/>MDS-UPDRS Guidelines]
+    D[Gemma 4 E2B<br/>Reasoning Pass]
+    E[Gemma 4 E2B<br/>JSON Structuring]
+    F[Validation & Self-Correction]
+    G[Output<br/>Gradio UI + SQLite]
+
+    A --> B --> C --> D --> E --> F --> G
+
+1. **Clinical Observations Input** (Gradio UI)  
+2. **Semantic Search** using `all-MiniLM-L6-v2`  
+3. **Vector Retrieval** from ChromaDB (MDS-UPDRS guidelines, local)  
+4. **Reasoning Pass** with Gemma 4 E2B (native thinking)  
+5. **Structured Output** via JSON (function calling)  
+6. **Schema Validation & Self-Correction Loop**  
+7. **Results Display & Storage** (Gradio UI + SQLite, local)
 
 100% AIR-GAPPED. ZERO CLOUD DEPENDENCY.
 ### Why Gemma 4
