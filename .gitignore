@@ -1,5 +1,6 @@
 *.db
 *.sqlite
 *.sqlite3
+!clinical_kb/chroma.sqlite3
 __pycache__/
 *.pyc
