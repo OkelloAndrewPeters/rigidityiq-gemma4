@@ -28,6 +28,9 @@ go unassessed for years. Not because the clinical knowledge doesn't exist.
 Because the tools to apply it never reach them.
 
 RigidityIQ is my answer to that gap — built not for the lab, but for the last mile.
+It assesses rigidity, one of the three cardinal motor symptoms of Parkinson's disease. Rigidity is an abnormal increase in muscle tone that stiffens the limbs, shortens the stride, and kills the natural arm swing that most of us never think about. A community health worker (CHW) can observe it. Until now, they had no clinical tool to grade it.
+
+RigidityIQ is a support tool.
 
 ---
 
