@@ -38,7 +38,7 @@ RigidityIQ is a support tool.
 
 > 📹 [Watch the demo video](#) ← replace with your YouTube link
 
-![RigidityIQ Demo](assets/demo.gif)
+![RigidityIQ Demo]([assets/demo.gif](https://youtu.be/XBHBvcGu4FI?si=blxuglB6bkSganJG))
 
 ---
 
