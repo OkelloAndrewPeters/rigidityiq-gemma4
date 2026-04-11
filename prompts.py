@@ -23,6 +23,11 @@
 # - Explicit grade definitions — even though the same definitions exist in the
 #   RAG knowledge base, repeating them here in the system prompt ensures they
 #   are always in context, regardless of what the retrieval step returns.
+# - Explicit referral rules in the system prompt — the single most important
+#   fix in this file. Previously the model was inferring referral decisions
+#   from training data alone, producing inverted results (Grade 3 = no referral,
+#   Grade 2 = referral). Rules are now stated explicitly and non-negotiably
+#   so the model cannot guess or hallucinate referral logic.
 # - "Conservative and evidence-based" and "Explicit about uncertainty" —
 #   deliberate constraints that counteract the tendency of LLMs to express
 #   false confidence. In a clinical tool, an uncertain output that says
@@ -39,6 +44,18 @@ You are grounded in the MDS-UPDRS Part III Item 3.3 rigidity scale:
 - Grade 3: Moderate increase, full range of motion still possible
 - Grade 4: Severe increase, full range of motion not achievable
 
+REFERRAL RULES — these are non-negotiable and must be followed exactly:
+- Grade 0: referral_recommended = false, urgency = "Routine"
+- Grade 1: referral_recommended = false, urgency = "Routine"
+- Grade 2: referral_recommended = true,  urgency = "Soon"
+- Grade 3: referral_recommended = true,  urgency = "Soon"
+- Grade 4: referral_recommended = true,  urgency = "Urgent"
+
+Additional red flags that escalate urgency to "Urgent" regardless of grade:
+- History of falls
+- Rapid progression since last visit
+- Medication failure or off-state presentation
+
 Your assessments must be:
 - Conservative and evidence-based
 - Expressed in plain language a non-specialist can act on
@@ -49,10 +66,11 @@ Your assessments must be:
 # ── REASONING_PROMPT ──────────────────────────────────────────────────────────
 # The first of the two inference passes — the deliberation step.
 #
-# This prompt intentionally does NOT ask for a grade. It asks the model to
-# think through the evidence before committing to anything. This mirrors
-# clinical reasoning: a neurologist reviews observations and weighs alternatives
-# before writing a conclusion, they don't generate a grade on first glance.
+# This prompt intentionally does NOT ask for a grade or referral decision.
+# It asks the model to think through the evidence before committing to anything.
+# This mirrors clinical reasoning: a neurologist reviews observations and weighs
+# alternatives before writing a conclusion, they don't generate a grade on
+# first glance.
 #
 # The four questions are structured to cover the full diagnostic reasoning chain:
 # 1. Evidence identification — what is actually present in the observations
@@ -86,6 +104,11 @@ Think step by step."""
 # asks it to formalise that reasoning into a strict JSON schema.
 #
 # Key design decisions:
+# - Referral rules restated here explicitly — rules appear in both the system
+#   prompt (persistent context) and here at the exact moment the model fills
+#   in referral_recommended and urgency. Repeating them at the decision point
+#   eliminates the inversion bug where the model was guessing referral logic
+#   from training data rather than following explicit instructions.
 # - history_context injection — the patient's last 3 assessments are included
 #   here (not in the reasoning prompt) so the progression commentary appears
 #   in the structured output field, not in the free reasoning trace.
@@ -98,7 +121,9 @@ Think step by step."""
 #     clinical_reasoning — the human-readable justification
 #     key_symptoms — the observable evidence that drove the grade
 #     progression — longitudinal commentary using the injected history
-#     referral_recommended — binary action signal, unambiguous for CHWs
+#     referral_recommended — set by explicit grade-based rules above,
+#                            never inferred. False for Grade 0–1,
+#                            True for Grade 2 and above.
 #     urgency — tiered escalation: Routine / Soon / Urgent
 #     health_worker_notes — plain-language next steps, no medical jargon
 #     follow_up_timeframe — concrete scheduling guidance
@@ -108,6 +133,13 @@ a structured rigidity assessment.
 {patient_data}
 
 {history_context}
+
+REFERRAL RULES — apply these exactly when setting referral_recommended and urgency:
+- Grade 0 or 1 → referral_recommended: false, urgency: "Routine"
+- Grade 2 or 3 → referral_recommended: true,  urgency: "Soon"
+- Grade 4      → referral_recommended: true,  urgency: "Urgent"
+- Override urgency to "Urgent" if observations mention falls, rapid progression,
+  or medication wearing off.
 
 Respond in valid JSON with exactly this structure:
 {{
